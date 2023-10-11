@@ -1,20 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
-import serverAuth from "@/libs/serverAuth";
 import prisma from "@/libs/prismadb";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'PATCH') {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "PATCH") {
     return res.status(405).end();
   }
 
   try {
-    const { currentUser } = await serverAuth(req);
+    const data = await axios.get("http://localhost:3002/current");
+    const currentUser = data.data;
 
     const { name, username, bio, profileImage, coverImage } = req.body;
 
     if (!name || !username) {
-      throw new Error('Missing fields');
+      throw new Error("Missing fields");
     }
 
     const updatedUser = await prisma.user.update({
@@ -26,8 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         username,
         bio,
         profileImage,
-        coverImage
-      }
+        coverImage,
+      },
     });
 
     return res.status(200).json(updatedUser);
