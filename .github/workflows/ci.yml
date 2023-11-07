@@ -49,4 +49,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.ACR_NAME }}.azurecr.io/twitter-user-service:latest
-       
+      
